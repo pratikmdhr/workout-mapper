@@ -1,0 +1,138 @@
+@import 'variables';
+@import 'form';
+@import 'modal';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+ 
+body {
+  font-family: 'Manrope', sans-serif;
+  color: $color-light--2;
+  font-weight: 400;
+  line-height: 1.6;
+  height: 100vh;
+  overscroll-behavior-y: none;
+
+  background-color: #fff;
+  display: flex;
+}
+
+/* GENERAL */
+a:link,
+a:visited {
+  color: $color-brand--1;
+}
+
+/* SIDEBAR */
+.sidebar {
+  flex-basis: 50rem;
+  background-color: $color-dark--1;
+  padding: 3rem 2.5rem 4rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  height: 5.2rem;
+  align-self: center;
+  margin-bottom: 4rem;
+}
+
+.workouts {
+  list-style: none;
+  height: 80vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.workouts::-webkit-scrollbar {
+  width: 0;
+}
+
+.workout {
+  background-color: $color-dark--2;
+  border-radius: 5px;
+  padding: 1.5rem 2.25rem;
+  margin-bottom: 1.75rem;
+  cursor: pointer;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 0.75rem 1.5rem;
+
+  &--running {
+    border-left: 5px solid $color-brand--2;
+  }
+  &--cycling {
+    border-left: 5px solid $color-brand--1;
+  }
+
+  &__title {
+    font-size: 1.7rem;
+    font-weight: 600;
+    grid-column: 1 / -1;
+  }
+
+  &__details {
+    display: flex;
+    align-items: baseline;
+  }
+
+  &__icon {
+    font-size: 1.8rem;
+    margin-right: 0.2rem;
+    height: 0.28rem;
+  }
+
+  &__value {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+  }
+
+  &__unit {
+    font-size: 1.1rem;
+    color: $color-light--1;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+}
+
+/* MAP */
+#map {
+  flex: 1;
+  height: 100%;
+  background-color: $color-light--1;
+}
+
+/* Popup width defined in javascript */
+.leaflet-popup {
+  .leaflet-popup-content-wrapper {
+    background-color: $color-dark--1;
+    color: $color-light--2;
+    border-radius: 5px;
+    padding-right: 0.6rem;
+  }
+
+  .leaflet-popup-content {
+    font-size: 1.5rem;
+  }
+
+  .leaflet-popup-tip {
+    background-color: $color-dark--1;
+  }
+}
+
+.running-popup .leaflet-popup-content-wrapper {
+  border-left: 5px solid $color-brand--2;
+}
+.cycling-popup .leaflet-popup-content-wrapper {
+  border-left: 5px solid $color-brand--1;
+}

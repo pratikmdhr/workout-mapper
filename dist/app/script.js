@@ -2,7 +2,7 @@
 
 // prettier-ignore
 
-const form = document.querySelector('.form');
+const form = document.querySelector('#form');
 const containerWorkouts = document.querySelector('.workouts');
 const inputType = document.querySelector('.form__input--type');
 const inputDistance = document.querySelector('.form__input--distance');
@@ -90,18 +90,20 @@ class App {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         this._loadMap.bind(this),
-        function () {
-          alert('Could not get your position');
-        }
+        // Set default value for location if the user declines location sharing
+        this._loadMap.bind(this, {
+          coords: {
+            latitude: 43.655913,
+            longitude: -79.381089,
+          },
+        })
       );
     }
   }
 
   _loadMap(position) {
     const { latitude, longitude } = position.coords;
-    console.log(`https://www.google.com/maps/@${latitude},${longitude},16z`);
     const coords = [latitude, longitude];
-    // console.log(this);
 
     this.#map = L.map('map').setView(coords, this.#mapZoomLevel); // 13 is the zoon level
 
@@ -244,7 +246,7 @@ class App {
     <span class="workout__unit">min/km</span>
   </div>
   <div class="workout__details">
-    <span class="workout__icon">🦶🏼</span>
+    <span class="workout__icon">👣️</span>
     <span class="workout__value">${workout.cadence}</span>
     <span class="workout__unit">spm</span>
   </div>
@@ -264,7 +266,7 @@ class App {
   </div>
 </li>`;
     }
-    form.insertAdjacentHTML('afterend', html);
+    containerWorkouts.insertAdjacentHTML('afterbegin', html);
   }
 
   _moveToPopup(e) {

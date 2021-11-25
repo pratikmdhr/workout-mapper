@@ -1,0 +1,23 @@
+{
+  "name": "mapty",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "sass": "node-sass -w sass/ -o dist/css/ --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pratikmndh/mapty.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pratikmndh/mapty/issues"
+  },
+  "homepage": "https://github.com/pratikmndh/mapty#readme",
+  "dependencies": {
+    "node-sass": "^6.0.1"
+  }
+}
