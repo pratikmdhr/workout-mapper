@@ -10,6 +10,8 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+const inputFormCancelBtn = document.querySelector('.form__btn__cancel');
+
 const toggleItem = document.querySelectorAll('.form__row');
 
 // let map, mapEvent;
@@ -84,6 +86,10 @@ class App {
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleELevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    inputFormCancelBtn.addEventListener(
+      'click',
+      this._inputFormCancelBtnHandler.bind(this)
+    );
   }
 
   _getPostion() {
@@ -137,6 +143,11 @@ class App {
     setTimeout(() => {
       form.style.display = 'grid';
     }, 1000);
+  }
+
+  _inputFormCancelBtnHandler(e) {
+    e.preventDefault();
+    this._hideForm();
   }
 
   _toggleELevationField() {
@@ -226,6 +237,10 @@ class App {
     let html = `
     <li class="workout workout--${workout.type}" data-id="${workout.id}">
       <h2 class="workout__title">${workout.description}</h2>
+      <div class="edit__icon">
+        <i class="fas fa-edit"></i>
+      </div>
+      <div class="workout__details__container">
       <div class="workout__details">
         <span class="workout__icon">${
           workout.type === 'running' ? '🏃‍♂️' : `🚴‍♀️`
@@ -250,6 +265,7 @@ class App {
     <span class="workout__value">${workout.cadence}</span>
     <span class="workout__unit">spm</span>
   </div>
+  </div>
 </li>`;
     }
 
@@ -263,6 +279,7 @@ class App {
     <span class="workout__icon">⛰</span>
     <span class="workout__value">${workout.elevationGain}</span>
     <span class="workout__unit">m</span>
+  </div>
   </div>
 </li>`;
     }

@@ -1,6 +1,7 @@
 @import 'variables';
 @import 'form';
 @import 'modal';
+@import 'button';
 
 * {
   margin: 0;
@@ -12,7 +13,7 @@ html {
   font-size: 62.5%;
   box-sizing: border-box;
 }
- 
+
 body {
   font-family: 'Manrope', sans-serif;
   color: $color-light--2;
@@ -62,11 +63,12 @@ a:visited {
   border-radius: 5px;
   padding: 1.5rem 2.25rem;
   margin-bottom: 1.75rem;
-  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
 
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 0.75rem 1.5rem;
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
+  }
 
   &--running {
     border-left: 5px solid $color-brand--2;
@@ -78,7 +80,28 @@ a:visited {
   &__title {
     font-size: 1.7rem;
     font-weight: 600;
-    grid-column: 1 / -1;
+    margin-bottom: 0.5rem;
+  }
+
+  .edit__icon {
+    position: absolute;
+    font-size: 1.3rem;
+    right: 20px;
+    top: 20px;
+    transition: all 0.2s ease;
+    color: $color-light--1;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-light--2;
+      transform: scale(1.2);
+    }
+  }
+
+  &__details__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0.75rem 1.5rem;
   }
 
   &__details {
