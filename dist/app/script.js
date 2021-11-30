@@ -9,9 +9,22 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
-
 const inputFormCancelBtn = document.querySelector('.form__btn__cancel');
 
+const overlay = document.querySelector('.overlay');
+const modal = document.querySelector('.modal');
+
+const editForm = document.querySelector('#edit-form');
+const editInputType = document.querySelector('.edit-form__input--type');
+const editInputDistance = document.querySelector('.edit-form__input--distance');
+const editInputDuration = document.querySelector('.edit-form__input--duration');
+const editInputCadence = document.querySelector('.edit-form__input--cadence');
+const editInputElevation = document.querySelector(
+  '.edit-form__input--elevation'
+);
+const editInputFormCancelBtn = document.querySelector(
+  '.edit-form__btn__cancel'
+);
 const toggleItem = document.querySelectorAll('.form__row');
 
 // let map, mapEvent;
@@ -74,6 +87,8 @@ class App {
   #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
+  #editWorkoutIndex = null;
+  #editEl;
 
   constructor() {
     // this gets called as soon as the new object is created
@@ -84,12 +99,27 @@ class App {
 
     // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
-    inputType.addEventListener('change', this._toggleELevationField);
+    editForm.addEventListener('submit', this._editWorkout.bind(this));
+    inputType.addEventListener('change', this._toggleInputFormElevationField);
+    editInputType.addEventListener(
+      'change',
+      this._toggleEditFormElevationField
+    );
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    containerWorkouts.addEventListener('click', e => {
+      if (e.target.classList.contains('edit-form__btn')) {
+        this._showEditForm(e);
+        return;
+      }
+    });
     inputFormCancelBtn.addEventListener(
       'click',
       this._inputFormCancelBtnHandler.bind(this)
     );
+    [overlay, editInputFormCancelBtn].forEach(item => {
+      item.addEventListener('click', this._hideEditForm);
+    });
+    // overlay.addEventListener('click', this._hideEditForm);
   }
 
   _getPostion() {
@@ -150,9 +180,20 @@ class App {
     this._hideForm();
   }
 
-  _toggleELevationField() {
+  _toggleInputFormElevationField() {
     inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
     inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
+  }
+
+  _toggleEditFormElevationField() {
+    editInputElevation
+      .closest('.form__row')
+      .classList.toggle('form__row--hidden');
+    editInputCadence
+      .closest('.form__row')
+      .classList.toggle('form__row--hidden');
+
+    console.log(editInputElevation);
   }
 
   _newWorkout(e) {
@@ -211,6 +252,97 @@ class App {
     this._setLocalStorage();
   }
 
+  _editWorkout(e) {
+    let newWorkout;
+    const validInputs = (...inputs) =>
+      inputs.every(input => Number.isFinite(input));
+
+    const allPositive = (...inputs) => inputs.every(input => input > 0);
+    e.preventDefault();
+    const oldWorkout = { ...this.#workouts[this.#editWorkoutIndex] };
+
+    // Get data from form
+    const newType = editInputType.value;
+    const newDistance = +editInputDistance.value;
+    const newDuration = +editInputDuration.value;
+
+    if (newType === 'running') {
+      const newCadence = +editInputCadence.value;
+      // Check if the data is valid
+
+      if (
+        !validInputs(newDistance, newDuration, newCadence) ||
+        !allPositive(newDistance, newDuration, newCadence)
+      )
+        return alert('Inputs have to be positive numbers');
+      newWorkout = new Running(
+        oldWorkout.coords,
+        newDistance,
+        newDuration,
+        newCadence
+      );
+      const newDescriptionArr = oldWorkout.description.split(' ');
+      newDescriptionArr[0] = 'Running';
+      newWorkout.coords = oldWorkout.coords;
+      newWorkout.date = oldWorkout.date;
+      newWorkout.description = newDescriptionArr.join(' ');
+      newWorkout.id = oldWorkout.id;
+    }
+    // If workout is cycling, create cycling object
+    if (newType === 'cycling') {
+      const newElevation = +editInputElevation.value;
+      if (
+        !validInputs(newDistance, newDuration, newElevation) ||
+        !allPositive(newDistance, newDuration)
+      )
+        return alert('Inputs have to be positive numbers');
+      newWorkout = new Cycling(
+        oldWorkout.coords,
+        newDistance,
+        newDuration,
+        newElevation
+      );
+      const newDescriptionArr = oldWorkout.description.split(' ');
+      newDescriptionArr[0] = 'Cycling';
+      newWorkout.coords = oldWorkout.coords;
+      newWorkout.date = oldWorkout.date;
+      newWorkout.description = newDescriptionArr.join(' ');
+      newWorkout.id = oldWorkout.id;
+    }
+
+    this.#workouts[this.#editWorkoutIndex] = { ...newWorkout };
+    // Render workout on the list
+    this._renderWorkout(newWorkout);
+
+    // Delete old workout from display
+    this.#editEl.remove();
+
+    // Render workout on map as marker
+    this._renderWorkoutMarker(newWorkout);
+
+    // Set local storage to all workouts
+    this._setLocalStorage();
+  }
+
+  _showEditForm(e) {
+    overlay.classList.remove('modal--hidden');
+    modal.classList.remove('modal--hidden');
+    this.#editEl = e.target.closest('.workout');
+    this.#editWorkoutIndex = this.#workouts.findIndex(
+      work => work.id === this.#editEl.dataset.id
+    );
+  }
+  _hideEditForm(e) {
+    e.preventDefault();
+    editInputDistance.value =
+      editInputDuration.value =
+      editInputCadence.value =
+      editInputElevation.value =
+        '';
+    overlay.classList.add('modal--hidden');
+    modal.classList.add('modal--hidden');
+  }
+
   _renderWorkoutMarker(workout) {
     L.marker(workout.coords)
       .addTo(this.#map)
@@ -237,9 +369,9 @@ class App {
     let html = `
     <li class="workout workout--${workout.type}" data-id="${workout.id}">
       <h2 class="workout__title">${workout.description}</h2>
-      <div class="edit__icon">
-        <i class="fas fa-edit"></i>
-      </div>
+      
+        <i class="fas fa-edit edit-form__btn"></i>
+      
       <div class="workout__details__container">
       <div class="workout__details">
         <span class="workout__icon">${
@@ -282,6 +414,10 @@ class App {
   </div>
   </div>
 </li>`;
+    }
+    if (this.#editEl) {
+      this.#editEl.insertAdjacentHTML('beforebegin', html);
+      return;
     }
     containerWorkouts.insertAdjacentHTML('afterbegin', html);
   }
