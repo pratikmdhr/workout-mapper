@@ -84,18 +84,25 @@ a:visited {
     margin-bottom: 0.5rem;
   }
 
-  .edit-form__btn {
+  &__btn__container {
     position: absolute;
     font-size: 1.3rem;
     right: 20px;
     top: 20px;
-    transition: all 0.2s ease;
     color: $color-light--1;
     cursor: pointer;
 
-    &:hover {
-      color: $color-light--2;
-      transform: scale(1.2);
+    .edit-form__btn {
+      margin-right: 2rem;
+    }
+
+    .edit-form__btn,
+    .delete__btn {
+      transition: all 0.2s ease;
+      &:hover {
+        color: $color-light--2;
+        transform: scale(1.2);
+      }
     }
   }
 

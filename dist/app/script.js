@@ -86,6 +86,7 @@ class App {
   #map;
   #mapZoomLevel = 13;
   #mapEvent;
+  #workoutsLayer = {};
   #workouts = [];
   #editWorkoutIndex = null;
   #editEl;
@@ -105,12 +106,16 @@ class App {
       'change',
       this._toggleEditFormElevationField
     );
-    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
     containerWorkouts.addEventListener('click', e => {
       if (e.target.classList.contains('edit-form__btn')) {
         this._showEditForm(e);
         return;
       }
+      if (e.target.classList.contains('delete__btn')) {
+        this._deleteWorkout(e);
+        return;
+      }
+      this._moveToPopup.bind(this)(e);
     });
     inputFormCancelBtn.addEventListener(
       'click',
@@ -143,10 +148,19 @@ class App {
 
     this.#map = L.map('map').setView(coords, this.#mapZoomLevel); // 13 is the zoon level
 
-    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(this.#map);
+    L.tileLayer(
+      'https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png',
+      {
+        maxZoom: 20,
+        attribution:
+          '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+      }
+    ).addTo(this.#map);
+
+    // L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    //   attribution:
+    //     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    // }).addTo(this.#map);
 
     // leaflet Event listener
     this.#map.on('click', this._showForm.bind(this));
@@ -240,6 +254,7 @@ class App {
     this.#workouts.push(workout);
 
     // Render workout on the list
+    console.log(workout);
     this._renderWorkout(workout);
 
     // Render workout on map as marker
@@ -314,14 +329,14 @@ class App {
     // Render workout on the list
     this._renderWorkout(newWorkout);
 
-    // Delete old workout from display
+    // Delete old workout from display, and reset the variable
     this.#editEl.remove();
-
-    // Render workout on map as marker
-    this._renderWorkoutMarker(newWorkout);
+    this.#editEl = null;
 
     // Set local storage to all workouts
     this._setLocalStorage();
+
+    this._hideEditForm();
   }
 
   _showEditForm(e) {
@@ -332,8 +347,7 @@ class App {
       work => work.id === this.#editEl.dataset.id
     );
   }
-  _hideEditForm(e) {
-    e.preventDefault();
+  _hideEditForm() {
     editInputDistance.value =
       editInputDuration.value =
       editInputCadence.value =
@@ -343,8 +357,21 @@ class App {
     modal.classList.add('modal--hidden');
   }
 
+  _deleteWorkout(e) {
+    const workoutToDel = e.target.closest('.workout');
+
+    this.#workouts = this.#workouts.filter(
+      workout => workout.id !== workoutToDel.dataset.id
+    );
+    console.log(this.#workouts);
+    workoutToDel.remove();
+    this.#map.removeLayer(this.#workoutsLayer[workoutToDel.dataset.id]);
+    delete this.#workoutsLayer[workoutToDel.dataset.id];
+    this._setLocalStorage();
+  }
+
   _renderWorkoutMarker(workout) {
-    L.marker(workout.coords)
+    this.#workoutsLayer[workout.id] = L.marker(workout.coords)
       .addTo(this.#map)
       .bindPopup(
         L.popup({
@@ -369,9 +396,10 @@ class App {
     let html = `
     <li class="workout workout--${workout.type}" data-id="${workout.id}">
       <h2 class="workout__title">${workout.description}</h2>
-      
+      <div class="workout__btn__container">
         <i class="fas fa-edit edit-form__btn"></i>
-      
+        <i class="fas fa-trash-alt delete__btn"></i>
+      </div>
       <div class="workout__details__container">
       <div class="workout__details">
         <span class="workout__icon">${
@@ -415,6 +443,7 @@ class App {
   </div>
 </li>`;
     }
+
     if (this.#editEl) {
       this.#editEl.insertAdjacentHTML('beforebegin', html);
       return;
@@ -424,7 +453,6 @@ class App {
 
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
-
     if (!workoutEl) return;
 
     const workout = this.#workouts.find(

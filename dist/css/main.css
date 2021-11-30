@@ -158,17 +158,22 @@ a:visited {
     font-size: 1.7rem;
     font-weight: 600;
     margin-bottom: 0.5rem; }
-  .workout .edit-form__btn {
+  .workout__btn__container {
     position: absolute;
     font-size: 1.3rem;
     right: 20px;
     top: 20px;
-    transition: all 0.2s ease;
     color: #aaa;
     cursor: pointer; }
-    .workout .edit-form__btn:hover {
-      color: #ececec;
-      transform: scale(1.2); }
+    .workout__btn__container .edit-form__btn {
+      margin-right: 2rem; }
+    .workout__btn__container .edit-form__btn,
+    .workout__btn__container .delete__btn {
+      transition: all 0.2s ease; }
+      .workout__btn__container .edit-form__btn:hover,
+      .workout__btn__container .delete__btn:hover {
+        color: #ececec;
+        transform: scale(1.2); }
   .workout__details__container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
