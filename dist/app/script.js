@@ -86,7 +86,7 @@ class App {
   #map;
   #mapZoomLevel = 13;
   #mapEvent;
-  #workoutsLayer = {};
+  #workoutsLayer = { tempMarkerId: null };
   #workouts = [];
   #editWorkoutIndex = null;
   #editEl;
@@ -171,6 +171,13 @@ class App {
 
   _showForm(mapE) {
     this.#mapEvent = mapE;
+    const tempCoords = mapE.latlng;
+    if (!this.#workoutsLayer.tempMarkerId) {
+      this.#workoutsLayer.tempMarkerId = L.marker(tempCoords).addTo(this.#map);
+    } else {
+      this.#map.removeLayer(this.#workoutsLayer.tempMarkerId);
+      this.#workoutsLayer.tempMarkerId = L.marker(tempCoords).addTo(this.#map);
+    }
     form.classList.remove('hidden');
     inputDistance.focus();
   }
@@ -189,8 +196,9 @@ class App {
     }, 1000);
   }
 
-  _inputFormCancelBtnHandler(e) {
-    e.preventDefault();
+  _inputFormCancelBtnHandler() {
+    this.#map.removeLayer(this.#workoutsLayer.tempMarkerId);
+    this.#workoutsLayer.tempMarkerId = null;
     this._hideForm();
   }
 
@@ -256,6 +264,10 @@ class App {
     // Render workout on the list
     console.log(workout);
     this._renderWorkout(workout);
+
+    // Remove temporary marker
+    this.#map.removeLayer(this.#workoutsLayer.tempMarkerId);
+    this.#workoutsLayer.tempMarkerId = null;
 
     // Render workout on map as marker
     this._renderWorkoutMarker(workout);
