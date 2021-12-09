@@ -15,10 +15,17 @@
   z-index: 0;
 }
 
+.modal-container {
+  background: transparent;
+}
+
 .modal {
   position: absolute;
   z-index: 100;
   position: absolute;
+  width: 50rem;
+  max-width: 98vw;
+  margin: 0 auto;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

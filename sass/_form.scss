@@ -2,15 +2,16 @@
   background-color: $color-dark--2;
   border-radius: 5px;
   padding: 1.75rem 2.75rem;
-  // margin-bottom: 1.75rem;
-
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem 2.5rem;
+  margin-bottom: 1.75rem;
 
   transition: all 0.4s, transform 1ms;
 
   // box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
+  &__input__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem 2.5rem;
+  }
 
   &.hidden {
     transform: translateY(-30rem);
@@ -52,19 +53,19 @@
   }
 
   .btn__container {
-    grid-column: 2 / span 1;
-    display: flex;
-    justify-content: space-between;
-    padding-top: 0.5rem;
-  }
-  .edit-form__btn__container {
-    margin-top: 1.5rem;
-    display: inline-block;
-    &__cancel {
+    padding-top: 1.5rem;
+    &__input-form {
       text-align: right;
+      & > * {
+        margin-left: 1rem;
+      }
     }
-    &__confirm {
-      text-align: left;
+
+    &__edit-input-form {
+      text-align: center;
+      & > * {
+        margin: 0 1rem;
+      }
     }
   }
 }

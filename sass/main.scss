@@ -12,6 +12,9 @@
 html {
   font-size: 62.5%;
   box-sizing: border-box;
+  @media only screen and (max-width: $bp-sm) {
+    font-size: 50%;
+  }
 }
 
 body {
@@ -19,11 +22,10 @@ body {
   color: $color-light--2;
   font-weight: 400;
   line-height: 1.6;
-  height: 100vh;
+
   overscroll-behavior-y: none;
 
   background-color: #fff;
-  display: flex;
 }
 
 /* GENERAL */
@@ -32,27 +34,79 @@ a:visited {
   color: $color-brand--1;
 }
 
-/* SIDEBAR */
-.sidebar {
-  flex-basis: 50rem;
-  background-color: $color-dark--1;
-  padding: 3rem 2.5rem 4rem 2.5rem;
+/* CONTAINER */
+.container {
   display: flex;
-  flex-direction: column;
+  height: calc(100vh - 6.4rem);
+  width: 100%;
+  @media only screen and (max-width: $bp-lg) {
+    flex-direction: column-reverse;
+  }
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  padding: 1rem 2.5rem;
+  background-color: $color-dark--3;
+  justify-content: center;
 }
 
 .logo {
-  height: 5.2rem;
-  align-self: center;
-  margin-bottom: 4rem;
+  .logo__name {
+    font-size: 2.75rem;
+    padding: 0 1rem;
+  }
+  .logo__icon {
+    position: relative;
+    font-size: 2.5rem;
+    top: 1rem;
+
+    &.fa-location-arrow {
+      font-size: 2rem;
+      top: 1.2rem;
+    }
+  }
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 50rem;
+  flex-shrink: 0;
+  background-color: $color-dark--1;
+  padding: 0rem 2.5rem 4rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  @media only screen and (max-width: $bp-lg) {
+    height: 50vh;
+    width: 100%;
+    padding-top: 1.75rem;
+  }
 }
 
 .workouts {
   list-style: none;
   height: 80vh;
-  margin-top: 1.75rem;
-  overflow-y: scroll;
+
+  // overflow-y: scroll;
   overflow-x: hidden;
+  @media only screen and (max-width: $bp-lg) {
+    height: 48vh;
+  }
+  .workouts__message {
+    padding-top: 5rem;
+    line-height: 2.5;
+    text-align: center;
+    h2 {
+      font-size: 1.75rem;
+    }
+    h3 {
+      font-size: 1.5rem;
+    }
+    &.hidden {
+      display: none;
+    }
+  }
 }
 
 .workouts::-webkit-scrollbar {
@@ -66,6 +120,11 @@ a:visited {
   margin-bottom: 1.75rem;
   position: relative;
   transition: all 0.2s ease;
+  @media only screen and (max-width: $bp-lg) {
+    max-width: $bp-md;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
   &:hover {
     box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
@@ -138,7 +197,7 @@ a:visited {
 
 /* MAP */
 #map {
-  flex: 1;
+  width: 100%;
   height: 100%;
   background-color: $color-light--1;
 }

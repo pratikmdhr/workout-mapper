@@ -2,10 +2,12 @@
   background-color: #42484d;
   border-radius: 5px;
   padding: 1.75rem 2.75rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem 2.5rem;
+  margin-bottom: 1.75rem;
   transition: all 0.4s, transform 1ms; }
+  .form__input__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem 2.5rem; }
   .form.hidden {
     transform: translateY(-30rem);
     height: 0;
@@ -34,17 +36,15 @@
     outline: none;
     background-color: #fff; }
   .form .btn__container {
-    grid-column: 2 / span 1;
-    display: flex;
-    justify-content: space-between;
-    padding-top: 0.5rem; }
-  .form .edit-form__btn__container {
-    margin-top: 1.5rem;
-    display: inline-block; }
-    .form .edit-form__btn__container__cancel {
+    padding-top: 1.5rem; }
+    .form .btn__container__input-form {
       text-align: right; }
-    .form .edit-form__btn__container__confirm {
-      text-align: left; }
+      .form .btn__container__input-form > * {
+        margin-left: 1rem; }
+    .form .btn__container__edit-input-form {
+      text-align: center; }
+      .form .btn__container__edit-input-form > * {
+        margin: 0 1rem; }
 
 .modal--hidden {
   display: none; }
@@ -59,10 +59,16 @@
 .add-overlay {
   z-index: 0; }
 
+.modal-container {
+  background: transparent; }
+
 .modal {
   position: absolute;
   z-index: 100;
   position: absolute;
+  width: 50rem;
+  max-width: 98vw;
+  margin: 0 auto;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -102,41 +108,82 @@
 html {
   font-size: 62.5%;
   box-sizing: border-box; }
+  @media only screen and (max-width: 576px) {
+    html {
+      font-size: 50%; } }
 
 body {
   font-family: 'Manrope', sans-serif;
   color: #ececec;
   font-weight: 400;
   line-height: 1.6;
-  height: 100vh;
   overscroll-behavior-y: none;
-  background-color: #fff;
-  display: flex; }
+  background-color: #fff; }
 
 /* GENERAL */
 a:link,
 a:visited {
   color: #ffb545; }
 
+/* CONTAINER */
+.container {
+  display: flex;
+  height: calc(100vh - 6.4rem);
+  width: 100%; }
+  @media only screen and (max-width: 992px) {
+    .container {
+      flex-direction: column-reverse; } }
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  padding: 1rem 2.5rem;
+  background-color: #2d3439;
+  justify-content: center; }
+
+.logo .logo__name {
+  font-size: 2.75rem;
+  padding: 0 1rem; }
+
+.logo .logo__icon {
+  position: relative;
+  font-size: 2.5rem;
+  top: 1rem; }
+  .logo .logo__icon.fa-location-arrow {
+    font-size: 2rem;
+    top: 1.2rem; }
+
 /* SIDEBAR */
 .sidebar {
-  flex-basis: 50rem;
+  width: 50rem;
+  flex-shrink: 0;
   background-color: #2d3439;
-  padding: 3rem 2.5rem 4rem 2.5rem;
+  padding: 0rem 2.5rem 4rem 2.5rem;
   display: flex;
   flex-direction: column; }
-
-.logo {
-  height: 5.2rem;
-  align-self: center;
-  margin-bottom: 4rem; }
+  @media only screen and (max-width: 992px) {
+    .sidebar {
+      height: 50vh;
+      width: 100%;
+      padding-top: 1.75rem; } }
 
 .workouts {
   list-style: none;
   height: 80vh;
-  margin-top: 1.75rem;
-  overflow-y: scroll;
   overflow-x: hidden; }
+  @media only screen and (max-width: 992px) {
+    .workouts {
+      height: 48vh; } }
+  .workouts .workouts__message {
+    padding-top: 5rem;
+    line-height: 2.5;
+    text-align: center; }
+    .workouts .workouts__message h2 {
+      font-size: 1.75rem; }
+    .workouts .workouts__message h3 {
+      font-size: 1.5rem; }
+    .workouts .workouts__message.hidden {
+      display: none; }
 
 .workouts::-webkit-scrollbar {
   width: 0; }
@@ -148,6 +195,11 @@ a:visited {
   margin-bottom: 1.75rem;
   position: relative;
   transition: all 0.2s ease; }
+  @media only screen and (max-width: 992px) {
+    .workout {
+      max-width: 768px;
+      margin-left: auto;
+      margin-right: auto; } }
   .workout:hover {
     box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px; }
   .workout--running {
@@ -196,7 +248,7 @@ a:visited {
 
 /* MAP */
 #map {
-  flex: 1;
+  width: 100%;
   height: 100%;
   background-color: #aaa; }
 

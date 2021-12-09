@@ -13,6 +13,7 @@ const inputFormCancelBtn = document.querySelector('.form__btn__cancel');
 
 const overlay = document.querySelector('.overlay');
 const modal = document.querySelector('.modal');
+const workoutsMessage = document.querySelector('.workouts__message');
 
 const editForm = document.querySelector('#edit-form');
 const editInputType = document.querySelector('.edit-form__input--type');
@@ -42,7 +43,7 @@ class Workout {
 
   _setDescription() {
     // prettier-ignore
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     this.description = `${this.type[0].toUpperCase() + this.type.slice(1)} on ${
       months[this.date.getMonth()]
@@ -170,6 +171,7 @@ class App {
   }
 
   _showForm(mapE) {
+    workoutsMessage.classList.add('hidden');
     this.#mapEvent = mapE;
     const tempCoords = mapE.latlng;
     if (!this.#workoutsLayer.tempMarkerId) {
@@ -200,6 +202,9 @@ class App {
     this.#map.removeLayer(this.#workoutsLayer.tempMarkerId);
     this.#workoutsLayer.tempMarkerId = null;
     this._hideForm();
+    if (this.#workouts.length === 0) {
+      workoutsMessage.classList.remove('hidden');
+    }
   }
 
   _toggleInputFormElevationField() {
@@ -262,7 +267,6 @@ class App {
     this.#workouts.push(workout);
 
     // Render workout on the list
-    console.log(workout);
     this._renderWorkout(workout);
 
     // Remove temporary marker
@@ -379,6 +383,9 @@ class App {
     workoutToDel.remove();
     this.#map.removeLayer(this.#workoutsLayer[workoutToDel.dataset.id]);
     delete this.#workoutsLayer[workoutToDel.dataset.id];
+    if (this.#workouts.length === 0) {
+      workoutsMessage.classList.remove('hidden');
+    }
     this._setLocalStorage();
   }
 
@@ -395,11 +402,7 @@ class App {
         })
       )
       .setPopupContent(
-        `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description
-          .split(' ')
-          .slice(2, 4)
-          .join(' ')
-          .slice(0, -1)}`
+        `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
       )
       .openPopup();
   }
@@ -486,7 +489,10 @@ class App {
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workouts'));
 
-    if (!data) return;
+    if (!data || data.length === 0) {
+      workoutsMessage.classList.remove('hidden');
+      return;
+    }
 
     this.#workouts = data;
 
