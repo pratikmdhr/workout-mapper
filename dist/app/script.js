@@ -90,7 +90,7 @@ class App {
   #workoutsLayer = { tempMarkerId: null };
   #workouts = [];
   #editWorkoutIndex = null;
-  #editEl;
+  #editEl = null;
 
   constructor() {
     // this gets called as soon as the new object is created
@@ -123,7 +123,10 @@ class App {
       this._inputFormCancelBtnHandler.bind(this)
     );
     [overlay, editInputFormCancelBtn].forEach(item => {
-      item.addEventListener('click', this._hideEditForm);
+      item.addEventListener('click', () => {
+        this.#editEl = null;
+        this._hideEditForm();
+      });
     });
     // overlay.addEventListener('click', this._hideEditForm);
   }
@@ -219,8 +222,6 @@ class App {
     editInputCadence
       .closest('.form__row')
       .classList.toggle('form__row--hidden');
-
-    console.log(editInputElevation);
   }
 
   _newWorkout(e) {
@@ -345,6 +346,10 @@ class App {
     // Render workout on the list
     this._renderWorkout(newWorkout);
 
+    // Delete old marker and render new workout
+    this.#map.removeLayer(this.#workoutsLayer[this.#editEl.dataset.id]);
+    this._renderWorkoutMarker(newWorkout);
+
     // Delete old workout from display, and reset the variable
     this.#editEl.remove();
     this.#editEl = null;
@@ -379,7 +384,6 @@ class App {
     this.#workouts = this.#workouts.filter(
       workout => workout.id !== workoutToDel.dataset.id
     );
-    console.log(this.#workouts);
     workoutToDel.remove();
     this.#map.removeLayer(this.#workoutsLayer[workoutToDel.dataset.id]);
     delete this.#workoutsLayer[workoutToDel.dataset.id];
@@ -458,7 +462,6 @@ class App {
   </div>
 </li>`;
     }
-
     if (this.#editEl) {
       this.#editEl.insertAdjacentHTML('beforebegin', html);
       return;
